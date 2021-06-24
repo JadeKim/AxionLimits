@@ -206,6 +206,58 @@ class AxionPhoton():
                         plt.text(1e-2,0.75/3,r'{\bf DFSZ II}',fontsize=fs,color='k')
             return
 
+    def QCDAxion_NonAbelianMonopole(ax,col='tab:purple',fs=18,RescaleByMass=False,text_on=True,thick_lines=False):
+            if RescaleByMass:
+                rs1 = 1.0
+                rs2 = 0.0
+            else:
+                rs1 = 0.0
+                rs2 = 1.0
+            ## QCD Axion band:
+            g_min,g_max = ax.get_ylim()
+            m_min,m_max = ax.get_xlim()
+
+            # Mass-coupling relation
+            def g_x(C_ag,m_a):
+                return 2e-10*C_ag*m_a
+            alpha = 1/137
+            AM = 27/(2*alpha*alpha) # Abelian Monopole
+            NAM3 = 6*pi*pi/(alpha*alpha) # AdS/QCD
+            NAM7 = 6*0.7*0.7/(alpha*alpha) # Gauge theories and magnetic charge
+
+            if rs1==0:
+                # Plot Band
+                n = 200
+                g = logspace(log10(g_min),log10(g_max),n)
+                m = logspace(log10(m_min),log10(m_max),n)
+
+                # QCD Non-Abelian Monopole Axion model
+                rot = 45.0
+                trans_angle = plt.gca().transData.transform_angles(array((rot,)),array([[0, 0]]))[0]
+                m2 = array([1e-9,5e-8])
+                if thick_lines:
+                    plt.plot(m,g_x(AM,m),'-',linewidth=5,color='k',zorder=0)
+                    plt.plot(m,g_x(AM,m),'-',linewidth=3,color=col,zorder=0)
+                else:
+                    plt.plot(m,g_x(AM,m),'-',linewidth=2,color=col,zorder=0)
+                    plt.plot(m,g_x(NAM3,m),'-',linewidth=2,color='tab:blue',zorder=0)
+                    plt.plot(m,g_x(NAM7,m),'-',linewidth=2,color='tab:blue',zorder=0)
+                if text_on:
+                    plt.text(1e-11,g_x(NAM3,1e-11)*1.05,r'{\bf AdS/QCD}',fontsize=fs,rotation=trans_angle,color='tab:blue',ha='left',va='bottom',rotation_mode='anchor')
+                    plt.text(1.6e-11,g_x(AM,1.6e-11)*1.05,r'{\bf Abelian Monopole}',fontsize=fs,rotation=trans_angle,color=col,ha='left',va='bottom',rotation_mode='anchor')
+            else:
+                C_min,C_max = ax.get_ylim()
+                n = 200
+                C = logspace(log10(C_min),log10(C_max),n)
+                m = logspace(log10(m_min),log10(m_max),n)
+                if thick_lines:
+                    plt.plot([m_min,m_max],[AM,AM],'-',lw=5,color='k')
+                    plt.plot([m_min,m_max],[AM,AM],'-',lw=3,color=col)
+                else:
+                    plt.plot([m_min,m_max],[AM,AM],'-',lw=2,color=col)
+                if text_on:
+                    plt.text(1.3e-9,AM/3,r'{\bf Abelian Monopole}',fontsize=fs,color=col)
+            return
 
     def ADMX(ax,col=[0.8, 0.0, 0.0],projection=False,fs=15,RescaleByMass=False,text_on=True):
         if RescaleByMass:
